@@ -1,4 +1,29 @@
 import random
+from tkinter import *
+
+
+def proection():
+    label00.config(text=is0(field[0][0]))
+    label01.config(text=is0(field[0][1]))
+    label02.config(text=is0(field[0][2]))
+    label03.config(text=is0(field[0][3]))
+    label10.config(text=is0(field[1][0]))
+    label11.config(text=is0(field[1][1]))
+    label12.config(text=is0(field[1][2]))
+    label13.config(text=is0(field[1][3]))
+    label20.config(text=is0(field[2][0]))
+    label21.config(text=is0(field[2][1]))
+    label22.config(text=is0(field[2][2]))
+    label23.config(text=is0(field[2][3]))
+    label30.config(text=is0(field[3][0]))
+    label31.config(text=is0(field[3][1]))
+    label32.config(text=is0(field[3][2]))
+    label33.config(text=is0(field[3][3]))
+
+
+def is0(a):
+    if not a == 0:
+        return str(a)
 
 
 def counter_0():
@@ -15,24 +40,15 @@ def new_step():
     randvar = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4]
     a = random.randint(0, 3)
     b = random.randint(0, 3)
-    if counter_0() >= 2:
-        for i in range(2):
-            while field[a][b] != 0:
-                a = random.randint(0, 3)
-                b = random.randint(0, 3)
-            field[a][b] = random.choice(randvar)
-    elif counter_0() == 1:
+    for i in range(2):
         while field[a][b] != 0:
             a = random.randint(0, 3)
             b = random.randint(0, 3)
         field[a][b] = random.choice(randvar)
-    else:
-        print('You lose!')
-    for i in range(4):
-        print('|'.join(map(str, field[i])))
+    proection()
 
 
-def move_up():
+def move_up(a):
     global field
     for j in range(4):
         for i in range(3):
@@ -52,9 +68,10 @@ def move_up():
                 field[i][j], field[i+1][j] = field[i][j]*2, 0
             else:
                 continue
+    new_step()
 
 
-def move_left():
+def move_left(a):
     global field
     for i in range(4):
         for j in range(3):
@@ -74,9 +91,10 @@ def move_left():
                 field[i][j], field[i][j+1] = field[i][j] * 2, 0
             else:
                 continue
+    new_step()
 
 
-def move_down():
+def move_down(a):
     global field
     for j in range(4):
         for i in range(3, 0, -1):
@@ -96,9 +114,10 @@ def move_down():
                 field[i][j], field[i - 1][j] = field[i][j] * 2, 0
             else:
                 continue
+    new_step()
 
 
-def move_right():
+def move_right(a):
     global field
     for i in range(4):
         for j in range(3, 0, -1):
@@ -118,24 +137,53 @@ def move_right():
                 field[i][j], field[i][j - 1] = field[i][j] * 2, 0
             else:
                 continue
+    new_step()
 
 
 field = [[0]*4 for i in range(4)]
+
+window = Tk()
+
+window.bind("<w>", move_up)
+window.bind('<a>', move_left)
+window.bind('<s>', move_down)
+window.bind('<d>', move_right)
+
+label00 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label01 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label02 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label03 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label10 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label11 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label12 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label13 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label20 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label21 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label22 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label23 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label30 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label31 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label32 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+label33 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=5)
+
+label00.grid(row=0, column=0)
+label01.grid(row=0, column=1)
+label02.grid(row=0, column=2)
+label03.grid(row=0, column=3)
+label10.grid(row=1, column=0)
+label11.grid(row=1, column=1)
+label12.grid(row=1, column=2)
+label13.grid(row=1, column=3)
+label20.grid(row=2, column=0)
+label20.grid(row=2, column=0)
+label21.grid(row=2, column=1)
+label22.grid(row=2, column=2)
+label23.grid(row=2, column=3)
+label30.grid(row=3, column=0)
+label31.grid(row=3, column=1)
+label32.grid(row=3, column=2)
+label33.grid(row=3, column=3)
+
 new_step()
-while True:
-    a = input('Print W to move up, A to move left, S to move down or D to move right: ')
-    a.lower()
-    if a == 'w':
-        move_up()
-        new_step()
-    elif a == 'a':
-        move_left()
-        new_step()
-    elif a == 's':
-        move_down()
-        new_step()
-    elif a == 'd':
-        move_right()
-        new_step()
-    else:
-        continue
+
+window.mainloop()
