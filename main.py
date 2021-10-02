@@ -19,6 +19,7 @@ def proection():
     label31.config(text=is0(field[3][1]), bg=colorchooser(field[3][1]))
     label32.config(text=is0(field[3][2]), bg=colorchooser(field[3][2]))
     label33.config(text=is0(field[3][3]), bg=colorchooser(field[3][3]))
+    label_score.config(text=("Score: "+str(score)))
 
 
 def colorchooser(a):
@@ -55,16 +56,6 @@ def is0(a):
         return ' '
 
 
-def counter_0():
-    global field
-    count = 0
-    for i in field:
-        for j in i:
-            if j == 0:
-                count += 1
-    return count
-
-
 def new_step():
     global field
     randvar = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4]
@@ -79,53 +70,78 @@ def new_step():
 
 def move_up(a):
     global field
+    global score
+    field2 = [[i for i in o] for o in field]
     for j in range(4):
         for n in range(4):
             for i in range(3):
                 if field[i][j] == 0:
                     field[i][j], field[i+1][j] = field[i+1][j], 0
                 elif field[i][j] == field[i+1][j]:
+                    score += field[i][j]
                     field[i][j], field[i+1][j] = field[i][j]*2, 0
-    new_step()
+    if field2 != field:
+        new_step()
+    else:
+        pass
 
 
 def move_down(a):
     global field
+    global score
+    field2 = [[i for i in o] for o in field]
     for j in range(4):
         for n in range(4):
             for i in range(3, 0, -1):
                 if field[i][j] == 0:
                     field[i-1][j], field[i][j] = 0, field[i-1][j]
                 elif field[i][j] == field[i-1][j]:
+                    score += field[i][j]
                     field[i-1][j], field[i][j] = 0, field[i][j]*2
-    new_step()
+    if field2 != field:
+        new_step()
+    else:
+        pass
 
 
 def move_right(a):
     global field
+    global score
+    field2 = [[i for i in o] for o in field]
     for i in range(4):
         for n in range(3):
             for j2 in range(3, 0, -1):
                 if field[i][j2] == 0:
                     field[i][j2 - 1], field[i][j2] = 0, field[i][j2-1]
                 elif field[i][j2] == field[i][j2-1]:
+                    score += field[i][j2]
                     field[i][j2-1], field[i][j2] = 0, field[i][j2]*2
-    new_step()
+    if field2 != field:
+        new_step()
+    else:
+        pass
 
 
 def move_left(a):
     global field
+    global score
+    field2 = [[i for i in o] for o in field]
     for i in range(4):
         for n in range(4):
             for j in range(3):
                 if field[i][j] == 0:
                     field[i][j], field[i][j+1] = field[i][j+1], 0
                 elif field[i][j] == field[i][j+1]:
+                    score += field[i][j]
                     field[i][j], field[i][j+1] = field[i][j]*2, 0
-    new_step()
+    if field2 != field:
+        new_step()
+    else:
+        pass
 
 
 field = [[0]*4 for i in range(4)]
+score = 0
 
 window = Tk()
 
@@ -142,22 +158,23 @@ window.bind('<Left>', move_left)
 window.bind('<Down>', move_down)
 window.bind('<Right>', move_right)
 
-label00 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label01 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label02 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label03 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label10 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label11 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label12 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label13 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label20 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label21 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label22 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label23 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label30 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label31 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label32 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
-label33 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE,bd=5)
+label00 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label01 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label02 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label03 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label10 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label11 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label12 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label13 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label20 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label21 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label22 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label23 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label30 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label31 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label32 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label33 = Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RIDGE, bd=5)
+label_score = Label(window, text='Score: 0', font=("Arial", 45))
 
 label00.grid(row=0, column=0)
 label01.grid(row=0, column=1)
@@ -175,6 +192,7 @@ label30.grid(row=3, column=0)
 label31.grid(row=3, column=1)
 label32.grid(row=3, column=2)
 label33.grid(row=3, column=3)
+label_score.grid(row=4, column=0, columnspan=4)
 
 new_step()
 new_step()
