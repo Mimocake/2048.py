@@ -120,23 +120,14 @@ def move_down(a):
 def move_right(a):
     global field
     for i in range(4):
-        for j in range(3, 0, -1):
-            if field[i][j] == 0:
-                j2 = j
-                while j2 < 0 and field[i][j2] == 0:
-                    j2 -= 1
-                field[i][j], field[i][j2] = field[i][j2], 0
-            elif j == 3 and (field[i][j] == field[i][j - 3] or
-                             field[i][j] == field[i][j - 2] or
-                             field[i][j] == field[i][j - 1]):
-                field[i][j], field[i][j - 3] = field[i][j] * 2, 0
-            elif j == 2 and (field[i][j] == field[i][j - 2] or
-                             field[i][j] == field[i][j - 1]):
-                field[i][j], field[i][j - 2] = field[i][j] * 2, 0
-            elif j == 1 and field[i][j] == field[i][j - 1]:
-                field[i][j], field[i][j - 1] = field[i][j] * 2, 0
-            else:
-                continue
+        for n in range(3):
+            j2 = 3
+            while j2 > 0:
+                if field[i][j2] == 0:
+                    field[i][j2 - 1], field[i][j2] = 0, field[i][j2-1]
+                elif field[i][j2] == field[i][j2-1]:
+                    field[i][j2-1], field[i][j2] = 0, field[i][j2]*2
+                j2 = j2 - 1
     new_step()
 
 
