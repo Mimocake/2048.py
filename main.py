@@ -39,8 +39,43 @@ def is0(a):
         return ' '
 
 
+def exist0(f):
+    b = False
+    for i in f:
+        for j in i:
+            if j == 0:
+                b = True
+    return b
+
+
+def neighbours(f):
+    b = False
+    for i in range(4):
+        for j in range(3):
+            if f[i][j] == f[i][j+1]:
+                b = True
+    for j in range(4):
+        for i in range(3):
+            if f[i][j] == f[i+1][j]:
+                b = True
+    return b
+
+
+def restart():
+    global score
+    global field
+    global llose
+    score = 0
+    field = [[0]*4 for i in range(4)]
+    llose.grid(row=5, column=0, columnspan=1)
+    llose.config(text='')
+    new_step()
+    new_step()
+
+
 def new_step():
     global field
+    global llose
     randvar = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4]
     a = random.randint(0, 3)
     b = random.randint(0, 3)
@@ -48,6 +83,10 @@ def new_step():
         a = random.randint(0, 3)
         b = random.randint(0, 3)
     field[a][b] = random.choice(randvar)
+    if not exist0(field):
+        if not neighbours(field):
+            llose.grid(row=6, column=0, columnspan=4)
+            llose.config(text="You lose!")
     proection()
 
 
@@ -149,6 +188,9 @@ for i in range(4):
         tiles[i][j].grid(row=i, column=j)
 
 label_score.grid(row=4, column=0, columnspan=4)
+Button(window, command=restart, text='Restart', font=("Arial", 45), bd=2).grid(row=5, column=0, columnspan=4)
+llose = Label(window, text="", font=("Arial", 45))
+llose.grid(row=5, column=0)
 
 new_step()
 new_step()
