@@ -181,7 +181,7 @@ window.bind('<Down>', move_down)
 window.bind('<Right>', move_right)
 tiles = [[Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=2)
           for j in range(4)] for k in range(4)]
-label_score = Label(window, text='Score: 0', font=("Arial", 45))
+label_score = Label(window, text='Score: 0', font=("Arial", 40))
 
 for i in range(4):
     for j in range(4):
