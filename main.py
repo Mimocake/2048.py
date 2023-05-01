@@ -44,22 +44,23 @@ class Screen(object):
     def __init__(self, size):
         self.size = size
         self.screen = Tk()
+        self.screen.title("2048")
+        self.screen.resizable(False, False)
         self.tiles = [[Label(self.screen, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=2)
                     for j in range(size)] for k in range(size)]
         for i in range(size):
             for j in range(size):
                 self.tiles[i][j].grid(row=i, column=j)
         self.label_score = Label(self.screen, text='Score: 0', font=("Arial", 40))
-        self.label_score.grid(row=size, column=size//4, columnspan=4)
-        Button(self.screen, text='Restart', font=("Arial", 45), bd=2).grid(row=size+1, column=0, columnspan=4)
+        self.label_score.grid(row=size, column=0, columnspan=size)
+        Button(self.screen, text='Restart', font=("Arial", 45), bd=2).grid(row=size+1, column=0, columnspan=size)
         self.l_lose = Label(self.screen, text="", font=("Arial", 45))
-        self.l_lose.grid(row=5, column=0)
-        self.screen.mainloop()
+        self.l_lose.grid(row=size, column=0)
 
-    def project(self, board, score):
+    def project(self, brd, score):
         for i in range(self.size):
             for j in range(self.size):
-                self.tiles[i][j].config(text=is0(board[i][j]), bg=colorchooser(board[i][j]))
+                self.tiles[i][j].config(text=is0(brd[i][j]), bg=colorchooser(brd[i][j]))
         self.label_score.config(text=("Score: " + str(score)))
         self.screen.update()
 
@@ -110,44 +111,58 @@ class Board(object):
                 for j in range(self.size):
                     if self.board[i-1][j] == self.board[i][j]:
                         self.board[i][j] *= 2
+                        self.score += self.board[i][j]
                         self.board[i-1][j] = 0
 
-    def move(self, direc):
-        if direc == "W":
-            self.rotate(90)
-            self.rotate(90)
-        elif direc == "A":
-            self.rotate(90)
-        elif direc == "D":
-            self.rotate(-90)
+    def move_up(self, event):
+        self.rotate(90)
+        self.rotate(90)
         self.compress()
         self.merge()
         self.compress()
-        if direc == "W":
-            self.rotate(90)
-            self.rotate(90)
-        elif direc == "A":
-            self.rotate(-90)
-        elif direc == "D":
-            self.rotate(90)
+        self.rotate(90)
+        self.rotate(90)
+        self.new_step()
+        screen.project(self.board, self.score)
+
+    def move_down(self, event):
+        self.compress()
+        self.merge()
+        self.compress()
+        self.new_step()
+        screen.project(self.board, self.score)
+
+    def move_left(self, event):
+        self.rotate(90)
+        self.compress()
+        self.merge()
+        self.compress()
+        self.rotate(-90)
+        self.new_step()
+        screen.project(self.board, self.score)
+
+    def move_right(self, event):
+        self.rotate(-90)
+        self.compress()
+        self.merge()
+        self.compress()
+        self.rotate(90)
+        self.new_step()
+        screen.project(self.board, self.score)
 
     def print(self):
         for i in range(0, self.size):
             print('|'.join(map(str, self.board[i])))
 
 
-def main():
-    size = int(input("Enter board size: "))
-    board = Board(size)
-    board.new_step()
-    board.new_step()
-    board.print()
-    while True:
-        d = input().upper()
-        board.move(d)
-        board.new_step()
-        board.print()
-
-
-if __name__ == "__main__":
-    main()
+size = int(input("Enter board size: "))
+screen = Screen(size)
+board = Board(size)
+screen.screen.bind('<w>', board.move_up)
+screen.screen.bind('<a>', board.move_left)
+screen.screen.bind('<s>', board.move_down)
+screen.screen.bind('<d>', board.move_right)
+board.new_step()
+board.new_step()
+screen.project(board.board, board.score)
+screen.screen.mainloop()
