@@ -1,12 +1,12 @@
-import random
 from tkinter import *
+import random
 
 
-def proection():
-    for i in range(4):
-        for j in range(4):
-            tiles[i][j].config(text=is0(field[i][j]), bg=colorchooser(field[i][j]))
-    label_score.config(text=("Score: "+str(score)))
+def is0(a):
+    if not a == 0:
+        return str(a)
+    else:
+        return ' '
 
 
 def colorchooser(a):
@@ -32,167 +32,122 @@ def colorchooser(a):
             return colors.get(i)
 
 
-def is0(a):
-    if not a == 0:
-        return str(a)
-    else:
-        return ' '
+class Tile:
+
+    def __init__(self, row, column):
+        self.r = int(row)
+        self.c = int(column)
 
 
-def exist0(f):
-    b = False
-    for i in f:
-        for j in i:
-            if j == 0:
-                b = True
-    return b
+class Screen(object):
+
+    def __init__(self, size):
+        self.size = size
+        self.screen = Tk()
+        self.tiles = [[Label(self.screen, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=2)
+                    for j in range(size)] for k in range(size)]
+        for i in range(size):
+            for j in range(size):
+                self.tiles[i][j].grid(row=i, column=j)
+        self.label_score = Label(self.screen, text='Score: 0', font=("Arial", 40))
+        self.label_score.grid(row=size, column=size//4, columnspan=4)
+        Button(self.screen, text='Restart', font=("Arial", 45), bd=2).grid(row=size+1, column=0, columnspan=4)
+        self.l_lose = Label(self.screen, text="", font=("Arial", 45))
+        self.l_lose.grid(row=5, column=0)
+        self.screen.mainloop()
+
+    def project(self, board, score):
+        for i in range(self.size):
+            for j in range(self.size):
+                self.tiles[i][j].config(text=is0(board[i][j]), bg=colorchooser(board[i][j]))
+        self.label_score.config(text=("Score: " + str(score)))
+        self.screen.update()
 
 
-def neighbours(f):
-    b = False
-    for i in range(4):
-        for j in range(3):
-            if f[i][j] == f[i][j+1]:
-                b = True
-    for j in range(4):
-        for i in range(3):
-            if f[i][j] == f[i+1][j]:
-                b = True
-    return b
+class Board(object):
+
+    def __init__(self, size):
+        self.size = size
+        self.board = [[0] * size for i in range(size)]
+        self.score = 0
+
+    def new_step(self):
+        free = []
+        for i in range(0, self.size):
+            for j in range(0, self.size):
+                if self.board[i][j] == 0:
+                    free.append(Tile(i, j))
+        if len(free) == 0:
+            print("Game over")
+            return None
+        rtile = random.choice(free)
+        self.board[rtile.r][rtile.c] = (random.randint(0, 9) == 9) * 2 + 2
+
+    def rotate(self, direc):
+        board2 = [[] * self.size for i in range(self.size)]
+        for i in range(0, self.size):
+            board2.append([])
+            for j in range(0, self.size):
+                board2[i].append(self.board[i][j])
+        for i in range(0, self.size):
+            for j in range(0, self.size):
+                if direc == -90:
+                    self.board[i][j] = board2[self.size - 1 - j][i]
+                elif direc == 90:
+                    self.board[self.size - 1 - j][i] = board2[i][j]
+
+    def compress(self):
+        for k in range(self.size-1):
+            for i in range(self.size-1, k, -1):
+                for j in range(self.size):
+                    if self.board[i-1][j] != 0 and self.board[i][j] == 0:
+                        self.board[i][j] = self.board[i-1][j]
+                        self.board[i-1][j] = 0
+
+    def merge(self):
+        for k in range(self.size-1):
+            for i in range(self.size-1, k, -1):
+                for j in range(self.size):
+                    if self.board[i-1][j] == self.board[i][j]:
+                        self.board[i][j] *= 2
+                        self.board[i-1][j] = 0
+
+    def move(self, direc):
+        if direc == "W":
+            self.rotate(90)
+            self.rotate(90)
+        elif direc == "A":
+            self.rotate(90)
+        elif direc == "D":
+            self.rotate(-90)
+        self.compress()
+        self.merge()
+        self.compress()
+        if direc == "W":
+            self.rotate(90)
+            self.rotate(90)
+        elif direc == "A":
+            self.rotate(-90)
+        elif direc == "D":
+            self.rotate(90)
+
+    def print(self):
+        for i in range(0, self.size):
+            print('|'.join(map(str, self.board[i])))
 
 
-def restart():
-    global score
-    global field
-    global llose
-    score = 0
-    field = [[0]*4 for i in range(4)]
-    llose.grid(row=5, column=0, columnspan=1)
-    llose.config(text='')
-    new_step()
-    new_step()
+def main():
+    size = int(input("Enter board size: "))
+    board = Board(size)
+    board.new_step()
+    board.new_step()
+    board.print()
+    while True:
+        d = input().upper()
+        board.move(d)
+        board.new_step()
+        board.print()
 
 
-def new_step():
-    global field
-    global llose
-    randvar = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4]
-    a = random.randint(0, 3)
-    b = random.randint(0, 3)
-    while field[a][b] != 0:
-        a = random.randint(0, 3)
-        b = random.randint(0, 3)
-    field[a][b] = random.choice(randvar)
-    if not exist0(field):
-        if not neighbours(field):
-            llose.grid(row=6, column=0, columnspan=4)
-            llose.config(text="You lose!")
-    proection()
-
-
-def move_up(a):
-    global field
-    global score
-    field2 = [[i for i in o] for o in field]
-    for j in range(4):
-        for n in range(4):
-            for i in range(3):
-                if field[i][j] == 0:
-                    field[i][j], field[i+1][j] = field[i+1][j], 0
-                elif field[i][j] == field[i+1][j]:
-                    score += field[i][j]
-                    field[i][j], field[i+1][j] = field[i][j]*2, 0
-    if field2 != field:
-        new_step()
-    else:
-        pass
-
-
-def move_down(a):
-    global field
-    global score
-    field2 = [[i for i in o] for o in field]
-    for j in range(4):
-        for n in range(4):
-            for i in range(3, 0, -1):
-                if field[i][j] == 0:
-                    field[i-1][j], field[i][j] = 0, field[i-1][j]
-                elif field[i][j] == field[i-1][j]:
-                    score += field[i][j]
-                    field[i-1][j], field[i][j] = 0, field[i][j]*2
-    if field2 != field:
-        new_step()
-    else:
-        pass
-
-
-def move_right(a):
-    global field
-    global score
-    field2 = [[i for i in o] for o in field]
-    for i in range(4):
-        for n in range(3):
-            for j2 in range(3, 0, -1):
-                if field[i][j2] == 0:
-                    field[i][j2 - 1], field[i][j2] = 0, field[i][j2-1]
-                elif field[i][j2] == field[i][j2-1]:
-                    score += field[i][j2]
-                    field[i][j2-1], field[i][j2] = 0, field[i][j2]*2
-    if field2 != field:
-        new_step()
-    else:
-        pass
-
-
-def move_left(a):
-    global field
-    global score
-    field2 = [[i for i in o] for o in field]
-    for i in range(4):
-        for n in range(4):
-            for j in range(3):
-                if field[i][j] == 0:
-                    field[i][j], field[i][j+1] = field[i][j+1], 0
-                elif field[i][j] == field[i][j+1]:
-                    score += field[i][j]
-                    field[i][j], field[i][j+1] = field[i][j]*2, 0
-    if field2 != field:
-        new_step()
-    else:
-        pass
-
-
-field = [[0]*4 for i in range(4)]
-score = 0
-
-window = Tk()
-
-window.bind('<w>', move_up)
-window.bind('<a>', move_left)
-window.bind('<s>', move_down)
-window.bind('<d>', move_right)
-window.bind('<W>', move_up)
-window.bind('<A>', move_left)
-window.bind('<S>', move_down)
-window.bind('<D>', move_right)
-window.bind('<Up>', move_up)
-window.bind('<Left>', move_left)
-window.bind('<Down>', move_down)
-window.bind('<Right>', move_right)
-tiles = [[Label(window, text='', font=('Arial', 30), height=2, width=4, relief=RAISED, bd=2)
-          for j in range(4)] for k in range(4)]
-label_score = Label(window, text='Score: 0', font=("Arial", 40))
-
-for i in range(4):
-    for j in range(4):
-        tiles[i][j].grid(row=i, column=j)
-
-label_score.grid(row=4, column=0, columnspan=4)
-Button(window, command=restart, text='Restart', font=("Arial", 45), bd=2).grid(row=5, column=0, columnspan=4)
-llose = Label(window, text="", font=("Arial", 45))
-llose.grid(row=5, column=0)
-
-new_step()
-new_step()
-
-window.mainloop()
+if __name__ == "__main__":
+    main()
